@@ -141,7 +141,10 @@ void Display3() {
 
   glColor3f(1,0.1,0.1); // red
   glBegin(GL_POINTS); 
-  // add lines of code here
+   glVertex2f(0.5, 0.5);
+   glVertex2f(-0.5, 0.5);
+   glVertex2f(-0.5, -0.5);
+   glVertex2f(0.5, -0.5);
   glEnd();
 }
 
@@ -154,7 +157,10 @@ void Display4() {
 
   glColor3f(1,0.1,0.1); // red
   glBegin(GL_LINE_STRIP); 
-  // add lines of code here
+      glVertex2f(1, 1);
+      glVertex2f(1, 0.84);
+      glVertex2f(0.6, 0.6);
+      glVertex2f(0.6, 0.44);
   glEnd();
 }
 
@@ -167,7 +173,10 @@ void Display5() {
 
   glColor3f(1,0.1,0.1); // red
   glBegin(GL_LINE_LOOP); 
-  // add lines of code here
+      glVertex2f(1, 1);
+      glVertex2f(1, 0.84);
+      glVertex2f(0.6, 0.6);
+      glVertex2f(0.6, 0.44);
   glEnd();
 }
 
@@ -183,6 +192,12 @@ void Display6() {
   glColor3f(1,0.1,0.1); // red
   glBegin(GL_TRIANGLES); 
   // add lines of code here
+      glVertex2f(1, 1); 
+      glVertex2f(1, 0.84); 
+      glVertex2f(0.84, 0.84);
+      glVertex2f(-1, -1);
+      glVertex2f(-1, -0.84);
+      glVertex2f(-0.84, -0.84);
   glEnd();
 }
 
@@ -197,8 +212,12 @@ void Display7() {
   // glBegin and glEnd.
 
   glColor3f(1,0.1,0.1); // red
-  glBegin(GL_QUADS); 
-  // add lines of code here
+  glPolygonMode(GL_FRONT, GL_FILL);
+  glBegin(GL_QUADS);
+     glVertex2f(1,1);
+     glVertex2f(0.3, 0.7);
+     glVertex2f(0.5, 0.5);
+     glVertex2f(1, 0.5);
   glEnd();
 }
 
@@ -211,10 +230,39 @@ void Display8() {
   // OpenGL guarantees that only convex polygons are
   // drawn correctly.
 
-  glColor3f(1,0.1,0.1); // red
+  glColor3f(0.1,0.1,1); // blue
+  glPolygonMode(GL_FRONT, GL_FILL);
   glBegin(GL_POLYGON);
-  // add lines of code here
+      glVertex2f(0.75, 0);
+      glVertex2f(0.4, 0.65);
+      glVertex2f(-0.4, 0.65);
+      glVertex2f(-0.75, 0);
+      glVertex2f(-0.4, -0.65);
+      glVertex2f(0.4, -0.65);
   glEnd();
+
+  glColor3f(1.0, 1.0, 1.0); //white
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glBegin(GL_POLYGON);
+      glVertex2f(0.5, 0);
+      glVertex2f(0.25, 0.45);
+      glVertex2f(-0.25, 0.45);
+      glVertex2f(-0.5, 0);
+      glVertex2f(-0.25, -0.45);
+      glVertex2f(0.25, -0.45);
+  glEnd();
+
+  glColor3f(1, 0.1, 0.1); // red
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glBegin(GL_POLYGON);
+      glVertex2f(0.5, 0);
+      glVertex2f(0.25, 0.45);
+      glVertex2f(-0.25, 0.45);
+      glVertex2f(-0.5, 0);
+      glVertex2f(-0.25, -0.45);
+      glVertex2f(0.25, -0.45);
+  glEnd();
+  
 }
 
 void Init(void) {
@@ -287,7 +335,7 @@ void Display(void) {
     //3 apeluri
     //separat perfect, sa nu treaca linii albastre, rosii
     //pixelul care a fost desenat mai tarziu acopera pixelul desenat inainte
-    //[Q][CG]Intrebare....
+    //      [Q][CG]Intrebare....
   default:
     break;
   }
