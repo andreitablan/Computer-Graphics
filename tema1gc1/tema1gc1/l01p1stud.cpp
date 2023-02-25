@@ -190,6 +190,7 @@ void Display6() {
   // glBegin and glEnd.
 
   glColor3f(1,0.1,0.1); // red
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glBegin(GL_TRIANGLES); 
   // add lines of code here
       glVertex2f(1, 1); 
