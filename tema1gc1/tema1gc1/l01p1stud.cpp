@@ -336,7 +336,7 @@ void Display(void) {
     //3 apeluri
     //separat perfect, sa nu treaca linii albastre, rosii
     //pixelul care a fost desenat mai tarziu acopera pixelul desenat inainte
-    //      [Q][CG]Intrebare....
+    
   default:
     break;
   }
