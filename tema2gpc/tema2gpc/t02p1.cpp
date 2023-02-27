@@ -41,8 +41,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include<iostream>
 #include <math.h>
-
+#include <cmath>
 #include "glut.h"
 
 // the size of the window measured in pixels
@@ -182,6 +183,34 @@ void Display2() {
    glEnd();
 }
 
+void Display3() {
+
+    double pi = 4 * atan(1.0);
+    double xmax = 1.0;
+    double ymax = 1.0;
+    double ratia = 0.005;
+    double zoom = 1;
+    glColor3f(1, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    glVertex2d(0.0, 1);
+    for (double x = ratia; x < xmax; x += ratia) {
+        double x1, y1;
+        x1 = x;
+        double x2 = x1 * 25;
+        double number = abs(x2 - round(x2));
+        printf("%f\n", number);
+        y1 = (number / 25) / x1;
+
+        glVertex2d(x1, y1);
+    }
+    glEnd();
+}
+void Display4() {}
+void Display5() {}
+void Display6() {}
+void Display7() {}
+
+
 
 void Init(void) {
 
@@ -204,6 +233,21 @@ void Display(void) {
    case '2':
       Display2();
       break;
+   case '3':
+       Display3();
+       break;
+   case '4':
+       Display4();
+       break;
+   case '5':
+       Display5();
+       break;
+   case '6':
+       Display6();
+       break;
+   case '7':
+       Display7();
+       break;
    default:
       break;
    }
