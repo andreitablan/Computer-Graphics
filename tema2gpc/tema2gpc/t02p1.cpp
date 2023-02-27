@@ -206,7 +206,25 @@ void Display3() {
     glEnd();
 }
 void Display4() {}
-void Display5() {}
+void Display5() {
+    double xmax, ymax, xmin, ymin;
+    double a = 0.1, b = 0.2;
+    double pi = 4 * atan(1.0);
+    double ratia = 0.05;
+    double t;
+
+    glColor3f(0.5, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    for (t = -3*pi; t <= 3*pi; t += ratia) {
+        double x,y;
+        x = a * t - b * sin(t);
+        y = a - b * cos(t);
+
+        glVertex2f(x, y);
+    }
+    glEnd();
+
+}
 void Display6() {}
 void Display7() {}
 
