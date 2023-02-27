@@ -225,8 +225,53 @@ void Display5() {
     glEnd();
 
 }
-void Display6() {}
-void Display7() {}
+void Display6() {
+    double a = 0.4;
+    double pi = 4 * atan(1.0);
+    double ratia = 0.01;
+    double t;
+
+
+    glColor3f(1, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    for (t = -pi / 4 ; t < pi / 4; t += ratia) {
+        double r1,x1, y1;
+        r1 = a * sqrt(2 * cos(2*t));
+        x1 = r1 * cos(t);
+        y1 = r1 * sin(t);
+        glVertex2f(x1, y1);
+    }
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    for (t = -pi / 4; t < pi / 4; t += ratia) {
+        double r2, x2, y2;
+        r2 = -a * sqrt(2 * cos(2 * t));
+        x2 = r2 * cos(t);
+        y2 = r2 * sin(t);
+        glVertex2f(x2, y2);
+
+    }
+    glEnd();
+
+}
+void Display7() {
+    double a = 0.02;
+    double pi = 4 * atan(1.0);
+    double ratia = 0.05;
+    double t;
+
+
+    glColor3f(1, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    for (t = 0; t < 2.9; t += ratia) {
+        double r, x, y;
+        r = a * exp(1+t);
+        x = r * cos(t);
+        y = r * sin(t);
+        glVertex2f(x, y);
+    }
+    glEnd();
+}
 
 
 
