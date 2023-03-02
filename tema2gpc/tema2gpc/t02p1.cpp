@@ -205,77 +205,61 @@ void Display3() {
     }
     glEnd();
 }
+
+
 void Display4() {
-    double xmax, ymax, xmin, ymin;
+    
     double a = 0.2, b = 2;
     double pi = 4 * atan(1.0);
-    double ratia = 0.01;
+    double ratia = 0.02;
     bool even = true;
     double t;
+    glPointSize(2.0);
 
-    xmax = a - b - 1;
-    xmin = a + b + 1;
-    ymax = ymin = 0;
-    for (t = -pi / 2 + ratia; t < pi / 2; t += ratia) {
-        double x1, y1, x2, y2;
-        x1 = a + b * cos(t);
-        xmax = (xmax < x1) ? x1 : xmax;
-        xmin = (xmin > x1) ? x1 : xmin;
-
-        x2 = a - b * cos(t);
-        xmax = (xmax < x2) ? x2 : xmax;
-        xmin = (xmin > x2) ? x2 : xmin;
-
-        y1 = a * tan(t) + b * sin(t);
-        ymax = (ymax < y1) ? y1 : ymax;
-        ymin = (ymin > y1) ? y1 : ymin;
-
-        y2 = a * tan(t) - b * sin(t);
-        ymax = (ymax < y2) ? y2 : ymax;
-        ymin = (ymin > y2) ? y2 : ymin;
-    }
-
-    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
-    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
-
-    
     glColor3f(1, 0.1, 0.1); // rosu
     glBegin(GL_TRIANGLES);
-    for (t = 0 + ratia; t < pi /4; t += ratia) {
-        if(t!= pi/6 && t!= -pi/6)
-        {double x, y;
-        x = a / ((4 * pow(cos(t), 2)) - 3);
-        y = (a * tan(t)) / ((4 * pow(cos(t), 2)) - 3);
-        glVertex2f(x, y);
-        if (even == true) {
-            glVertex2f(-1.0, 1.0);
-            even = false;
+    glVertex2d(-1, 1);
+
+    for (t = -pi / 2 + ratia; t < pi / 15; t += ratia) {
+        if (t != pi / 6 && t != -pi / 6) {
+            double x1, y1;
+            x1 = a / (4 * cos(t) * cos(t) - 3);
+            y1 = a * tan(t) / (4 * cos(t) * cos(t) - 3);
+
+            if (y1 < 0)
+                break;
+
+            glVertex2d(x1, y1);
+
+            if (even == true) {
+                glVertex2f(-1.0, 1.0);
+                even = false;
+            }
+            else {
+                even = true;
+            }
         }
-        else{
-            even = true;
-        }
-        }   
     }
     glEnd();
-    
-    glColor3f(0.1, 0.1, 0.1); // alb
+
+    glColor3f(0.1, 0.1, 0.1); //negru
     glBegin(GL_LINE_STRIP);
 
-    for (t = -pi / 2 + ratia; t < pi / 2; t += ratia) 
+    for (t = -pi / 2 + ratia; t < pi / 2; t += ratia)
     {
         if (t != pi / 6 && t != -pi / 6)
         {
             double x, y;
             x = a / ((4 * pow(cos(t), 2)) - 3);
             y = (a * tan(t)) / ((4 * pow(cos(t), 2)) - 3);
-            glVertex2f(x, y);
+            if (y > 0) {
+                glVertex2f(x, y);
+            }
+            else break;
+
         }
     }
-
-    
     glEnd();
-
-
 }
 void Display5() {
     double xmax, ymax, xmin, ymin;
