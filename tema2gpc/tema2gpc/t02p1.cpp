@@ -220,11 +220,11 @@ void Display4() {
     glBegin(GL_TRIANGLES);
     glVertex2d(-1, 1);
 
-    for (t = -pi / 2 + ratia; t < pi / 15; t += ratia) {
+    for (t = -pi / 2 + ratia; t < pi / 2; t += ratia) {
         if (t != pi / 6 && t != -pi / 6) {
             double x1, y1;
-            x1 = a / (4 * cos(t) * cos(t) - 3);
-            y1 = a * tan(t) / (4 * cos(t) * cos(t) - 3);
+            x1 = a / ((4 * pow(cos(t), 2)) - 3);
+            y1 = a * tan(t) / ((4 * pow(cos(t), 2)) - 3);
 
             if (y1 < 0)
                 break;

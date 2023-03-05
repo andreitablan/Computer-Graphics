@@ -1,2 +1,6 @@
 ﻿  t02p1.cpp
-  tema2gpc.vcxproj -> D:\GC\tema2gpc\Debug\tema2gpc.exe
+D:\git\GPC_andan\tema2gpc\tema2gpc\t02p1.cpp(265,24): warning C4101: 'xmin': unreferenced local variable
+D:\git\GPC_andan\tema2gpc\tema2gpc\t02p1.cpp(265,18): warning C4101: 'ymax': unreferenced local variable
+D:\git\GPC_andan\tema2gpc\tema2gpc\t02p1.cpp(265,30): warning C4101: 'ymin': unreferenced local variable
+D:\git\GPC_andan\tema2gpc\tema2gpc\t02p1.cpp(265,12): warning C4101: 'xmax': unreferenced local variable
+  tema2gpc.vcxproj -> D:\git\GPC_andan\tema2gpc\Debug\tema2gpc.exe
