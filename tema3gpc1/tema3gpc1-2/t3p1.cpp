@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <float.h>
 
@@ -15,6 +16,8 @@
 // increments used in CJuliaFatou
 #define RX_JF 0.01
 #define RY_JF 0.01
+#define my_point_size (1.5)
+#define my_step (0.007)
 
 unsigned char prevKey;
 
@@ -24,7 +27,7 @@ public:
   CComplex(double re1, double im1) : re(re1 * 1.0), im(im1 * 1.0) {}
   CComplex(const CComplex &c) : re(c.re), im(c.im) {}
 	~CComplex() {}
-
+ 
   CComplex &operator=(const CComplex &c) 
   {
     re = c.re;
@@ -52,6 +55,7 @@ public:
     rez.im = 2.0 * re * im;
     return rez;
   }
+ 
 
 	friend CComplex operator+(const CComplex &c1, const CComplex &c2);
 	friend CComplex operator*(CComplex &c1, CComplex &c2);
@@ -105,17 +109,18 @@ public:
 
   // it tests if x belongs to the Julia-Fatou set Jc
   // it returns 0 if yes, -1 for finite convergence, +1 for infinite convergence
-  int isIn(CComplex &x)
+  int isIn(CComplex &nr)
   {
     int rez = 0;
     // an array for storing the values for computing z_n+1 = z_n * z_n + c
     CComplex z0,z1;
-
-    z0 = x;
+    
+    z0 = nr;
+    CComplex c = z0;
     for (int i = 1; i < m.nriter; i++)
     {
-      z1 = z0 * z0 + m.c;
-      if (z1 == z0) 
+      z1 = z0 * z0 + c;
+      if (z1 == z0||z1.getModul()>2)
       {
         // x does not belong to the J-F set because the 
         // iterative process converges finitely
@@ -149,13 +154,15 @@ public:
         int r = isIn(z);
         if (r == 0) 
         {
-          glVertex3d(x,y,0);
+          glVertex3d(x/2,y/2,0);
         }
         else if (r == -1)
         {
+           
         }
         else if (r == 1)
         {
+           
         }
       }
     fprintf(stdout, "STOP\n");
@@ -194,6 +201,17 @@ void Display2() {
   cjf.display(-1, -1, 1, 1);
 }
 
+void Display3()
+{
+    CComplex c(-0.12375, 0.056805);
+
+    CJuliaFatou cjf(c);
+    glColor3f(1.0, 0.1, 0.1);
+    cjf.setnriter(10);
+    cjf.display(-2,-2,2,2);
+   
+}
+
 void Init(void) {
 
    glClearColor(1.0,1.0,1.0,1.0);
@@ -212,6 +230,10 @@ void Display(void) {
   case '2':
     glClear(GL_COLOR_BUFFER_BIT);
     Display2();
+    break;
+  case '3':
+    glClear(GL_COLOR_BUFFER_BIT); 
+    Display3();
     break;
   default:
     break;
