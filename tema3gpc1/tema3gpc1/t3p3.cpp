@@ -438,6 +438,104 @@ public:
 
 
 };
+
+class CArboreBinar2
+{
+public:
+    void arborePerron(double lungime,int nivel,double factordiviziune,CPunct p,CVector v)
+    {
+        assert(factordiviziune != 0);
+        CPunct p1, p2;
+        if (nivel == 0)
+        {
+            return;
+        }
+        else
+        {
+            v.rotatie(-45);
+            v.deseneaza(p, lungime);
+            p1 = v.getDest(p, lungime);
+            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+
+            v.rotatie(+90);
+            v.deseneaza(p, lungime);
+            p1 = v.getDest(p, lungime);
+            p2 = p1;
+
+            v.rotatie(15);
+            v.deseneaza(p1, lungime);
+            p1 = v.getDest(p1, lungime);
+            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+
+            p1 = p2;
+            v.rotatie(-60);
+            v.deseneaza(p1, lungime);
+            p1 = v.getDest(p1, lungime);
+            p2 = p1;
+
+            v.rotatie(30);
+            v.deseneaza(p1, lungime/2);
+            p1 = v.getDest(p1, lungime/2);
+            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+
+            p1 = p2;
+            v.rotatie(-120);
+            v.deseneaza(p1, lungime/2);
+            p1 = v.getDest(p1, lungime/2);
+            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+        }
+    }
+
+    void afisare(double lungime, int nivel)
+    {
+        CVector v(0.0, -1.0);
+        CPunct p(0.0, 1.0);
+
+        v.deseneaza(p, 0.25);
+        p = v.getDest(p, 0.25);
+        arborePerron(lungime, nivel, 0.4, p, v);
+    }
+};
+
+
+class CCurbaHilbert2
+{
+public:
+    void curbaHilbert(double lungime, int nivel, CPunct& p, CVector& v, int d)
+    {
+        if (nivel == 0)
+        {
+        }
+        else
+        {
+            v.rotatie(-d * 60);
+            curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+            v.deseneaza(p, lungime);
+            p = v.getDest(p, lungime);
+
+            v.rotatie(d * 60);
+            curbaHilbert(lungime/2, nivel - 1, p, v, d);
+            v.deseneaza(p, lungime);
+            p = v.getDest(p, lungime);
+
+            v.rotatie(d * 60);
+            curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+            v.deseneaza(p, lungime);
+            p = v.getDest(p, lungime);
+
+        }
+    }
+
+    void afisare(double lungime, int nivel)
+    {
+        CVector v(1.0, 0.0);
+        CPunct p(-0.7, 0.7);
+
+        curbaHilbert(lungime, nivel, p, v, 1);
+    }
+};
+
+
 // displays the Koch snowflake
 void Display1() {
     CCurbaKoch cck;
@@ -592,6 +690,19 @@ void Display5() {
     nivel++;
 }
 
+void Display6() {
+    CArboreBinar2 cab;
+    cab.afisare(0.3, nivel);
+    nivel++;
+}
+
+void Display7() {
+    CCurbaHilbert2 cbh;
+    cbh.afisare(0.8, nivel);
+    nivel++;
+
+}
+
 void Init(void) {
 
     glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -631,6 +742,14 @@ void Display(void)
     case '5':
         glClear(GL_COLOR_BUFFER_BIT);
         Display5();
+        break;
+    case '6':
+        glClear(GL_COLOR_BUFFER_BIT);
+        Display6();
+        break;
+    case '7':
+        glClear(GL_COLOR_BUFFER_BIT);
+        Display7();
         break;
     default:
         break;
