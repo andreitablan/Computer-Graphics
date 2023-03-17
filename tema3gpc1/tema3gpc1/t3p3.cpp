@@ -355,24 +355,50 @@ public:
         CPunct p1;
         if (nivel == 0)
         {
-            v.deseneaza(p, lungime);
+            //v.deseneaza(p, lungime);
         }
         else
         {
+            double x, y;
+            p.getxy(x, y);
 
+            CPunct p (x + -1 * lungime, y + -1 * lungime);
             segmentImage1(lungime / 3.0, nivel - 1, p, v);
-            p1 = v.getDest(p, lungime / 3.0);
+
+            CPunct p2(x + -1 * lungime, y + 1 * lungime);
+            segmentImage1(lungime / 3.0, nivel - 1, p2, v);
+
+            CPunct p3(x + 1 * lungime, y + -1 * lungime);
+            segmentImage1(lungime / 3.0, nivel - 1, p3, v);
+
+            CPunct p4(x + 1 * lungime, y + 1 * lungime);
+            segmentImage1(lungime / 3.0, nivel - 1, p4, v);
+
+            CPunct p5(x + -1 * lungime, y);
+            segmentImage1(lungime / 3.0, nivel - 1, p5, v);
+
+            CPunct p6(x + 1 * lungime, y);
+            segmentImage1(lungime / 3.0, nivel - 1, p6, v);
+
+            CPunct p7(x , y + 1 * lungime);
+            segmentImage1(lungime / 3.0, nivel - 1, p7, v);
+
+            CPunct p8(x , y + -1 * lungime);
+            segmentImage1(lungime / 3.0, nivel - 1, p8, v);
+
+            CPunct p9(x + lungime / 2, y + lungime / 2);
+            deseneaza_patrat(lungime,v,p9);
+
+        }
+    }
+
+    void deseneaza_patrat(double lungime, CVector v, CPunct p) {
+        int rotatie_index = 90;
+        while (rotatie_index <= 360) {
             v.rotatie(90);
-            segmentImage1(lungime / 3.0, nivel - 1, p1, v);
-            p1 = v.getDest(p1, lungime / 3.0);
-            v.rotatie(90);
-            segmentImage1(lungime / 3.0, nivel - 1, p1, v);
-            p1 = v.getDest(p1, lungime / 3.0);
-            v.rotatie(90);
-            segmentImage1(lungime, nivel - 1, p1, v);
-            p1 = v.getDest(p1, lungime / 3.0);
-            v.rotatie(90);
-            segmentImage1(lungime / 3.0, nivel - 1, p1, v);
+            v.deseneaza(p, lungime);
+            p = v.getDest(p, lungime);
+            rotatie_index += 90;
         }
     }
 
@@ -559,7 +585,7 @@ void Display4() {
 
 void Display5() {
     Image1 cck;
-    cck.afisare(0.5, nivel);
+    cck.afisare(0.5, nivel+1);
 
 
 
