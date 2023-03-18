@@ -506,24 +506,27 @@ public:
         if (nivel == 0)
         {
         }
-        else
-        {
-            v.rotatie(-d * 60);
-            curbaHilbert(lungime/2, nivel - 1, p, v, -d);
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
+        else if(nivel == 1){
+            if (d == 1) {
+                for (int i = 0; i < 3; i++)
+                    v.rotatie(30);
+                    v.deseneaza(p, lungime);
+                    p = v.getDest(p, lungime);
+                }
+            }
+            else
+            {
+                v.rotatie(-d * 60);
+                curbaHilbert(lungime/2, nivel - 1, p, v, -d);
 
-            v.rotatie(d * 60);
-            curbaHilbert(lungime/2, nivel - 1, p, v, d);
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
+                v.rotatie(d * 60);
+                curbaHilbert(lungime/2, nivel - 1, p, v, d);
 
-            v.rotatie(d * 60);
-            curbaHilbert(lungime/2, nivel - 1, p, v, -d);
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
 
-        }
+                v.rotatie(d * 60);
+                curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+
+            }
     }
 
     void afisare(double lungime, int nivel)
