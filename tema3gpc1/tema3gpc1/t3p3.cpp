@@ -86,9 +86,9 @@ CComplex operator*(CComplex& c1, CComplex& c2)
     return rez;
 }
 
-class CJuliaFatou {
+class CMandelbrot {
 public:
-    CJuliaFatou()
+    CMandelbrot()
     {
         // m.c is initialized by default with 0+0i
 
@@ -96,14 +96,14 @@ public:
         m.modmax = MODMAX_JF;
     }
 
-    CJuliaFatou(CComplex& c)
+    CMandelbrot(CComplex& c)
     {
         m.c = c;
         m.nriter = NRITER_JF;
         m.modmax = MODMAX_JF;
     }
 
-    ~CJuliaFatou() {}
+    ~CMandelbrot() {}
 
     void setmodmax(double v) { assert(v <= MODMAX_JF); m.modmax = v; }
     double getmodmax() { return m.modmax; }
@@ -337,190 +337,10 @@ private:
     }
 };
 
-class CCurbaKoch
+class CSquares
 {
 public:
-    void segmentKoch(double lungime, int nivel, CPunct& p, CVector v)
-    {
-        CPunct p1;
-        if (nivel == 0)
-        {
-            v.deseneaza(p, lungime);
-        }
-        else
-        {
-            segmentKoch(lungime / 3.0, nivel - 1, p, v);
-            p1 = v.getDest(p, lungime / 3.0);
-            v.rotatie(60);
-            segmentKoch(lungime / 3.0, nivel - 1, p1, v);
-            p1 = v.getDest(p1, lungime / 3.0);
-            v.rotatie(-120);
-            segmentKoch(lungime / 3.0, nivel - 1, p1, v);
-            p1 = v.getDest(p1, lungime / 3.0);
-            v.rotatie(60);
-            segmentKoch(lungime / 3.0, nivel - 1, p1, v);
-        }
-    }
-
-    void afisare(double lungime, int nivel)
-    {
-        CVector v1(sqrt(3.0) / 2.0, 0.5);
-        CPunct p1(-1.0, 0.0);
-
-        CVector v2(0.0, -1.0);
-        CPunct p2(0.5, sqrt(3.0) / 2.0);
-
-        CVector v3(-sqrt(3.0) / 2.0, 0.5);
-        CPunct p3(0.5, -sqrt(3.0) / 2.0);
-
-        segmentKoch(lungime, nivel, p1, v1);
-        segmentKoch(lungime, nivel, p2, v2);
-        segmentKoch(lungime, nivel, p3, v3);
-    }
-};
-
-class CArboreBinar
-{
-public:
-    void arboreBinar(double lungime, int nivel, CPunct& p, CVector v)
-    {
-        CPunct p1;
-        if (nivel == 0)
-        {
-            v.deseneaza(p, lungime);
-        }
-        else
-        {
-            arboreBinar(lungime, nivel - 1, p, v);
-            p1 = v.getDest(p, lungime);
-
-            v.rotatie(-45);
-            arboreBinar(lungime / 2.0, nivel - 1, p1, v);
-
-            v.rotatie(90);
-            arboreBinar(lungime / 2.0, nivel - 1, p1, v);
-        }
-    }
-
-    void afisare(double lungime, int nivel)
-    {
-        CVector v(0.0, -1.0);
-        CPunct p(0.0, 1.0);
-
-        arboreBinar(lungime, nivel, p, v);
-    }
-};
-
-class CArborePerron
-{
-public:
-    void arborePerron(double lungime,
-        int nivel,
-        double factordiviziune,
-        CPunct p,
-        CVector v)
-    {
-        assert(factordiviziune != 0);
-        CPunct p1, p2;
-        if (nivel == 0)
-        {
-        }
-        else
-        {
-            v.rotatie(30);
-            v.deseneaza(p, lungime);
-            p1 = v.getDest(p, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
-
-            v.rotatie(-90);
-            v.deseneaza(p, lungime);
-            p1 = v.getDest(p, lungime);
-            p2 = p1;
-
-            v.rotatie(-30);
-            v.deseneaza(p1, lungime);
-            p1 = v.getDest(p1, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
-
-            p1 = p2;
-            v.rotatie(90);
-            v.deseneaza(p1, lungime);
-            p1 = v.getDest(p1, lungime);
-            p2 = p1;
-
-            v.rotatie(30);
-            v.deseneaza(p1, lungime);
-            p1 = v.getDest(p1, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
-
-            p1 = p2;
-            v.rotatie(-90);
-            v.deseneaza(p1, lungime);
-            p1 = v.getDest(p1, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
-        }
-    }
-
-    void afisare(double lungime, int nivel)
-    {
-        CVector v(0.0, 1.0);
-        CPunct p(0.0, -1.0);
-
-        v.deseneaza(p, 0.25);
-        p = v.getDest(p, 0.25);
-        arborePerron(lungime, nivel, 0.4, p, v);
-    }
-};
-
-
-
-class CCurbaHilbert
-{
-public:
-    void curbaHilbert(double lungime, int nivel, CPunct& p, CVector& v, int d)
-    {
-        if (nivel == 0)
-        {
-        }
-        else
-        {
-            v.rotatie(d * 90);
-            curbaHilbert(lungime, nivel - 1, p, v, -d);
-
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
-
-            v.rotatie(-d * 90);
-            curbaHilbert(lungime, nivel - 1, p, v, d);
-
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
-
-            curbaHilbert(lungime, nivel - 1, p, v, d);
-
-            v.rotatie(-d * 90);
-            v.deseneaza(p, lungime);
-            p = v.getDest(p, lungime);
-
-            curbaHilbert(lungime, nivel - 1, p, v, -d);
-
-            v.rotatie(d * 90);
-        }
-    }
-
-    void afisare(double lungime, int nivel)
-    {
-        CVector v(0.0, 1.0);
-        CPunct p(0.0, 0.0);
-
-        curbaHilbert(lungime, nivel, p, v, 1);
-    }
-};
-
-class Image1
-{
-public:
-    void segmentImage1(double lungime, int nivel, CPunct& p, CVector v)
+    void segmentSquares(double lungime, int nivel, CPunct& p, CVector v)
     {
         CPunct p1;
         if (nivel == 0)
@@ -533,28 +353,28 @@ public:
             p.getxy(x, y);
 
             CPunct p (x + -1 * lungime, y + -1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p, v);
 
             CPunct p2(x + -1 * lungime, y + 1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p2, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p2, v);
 
             CPunct p3(x + 1 * lungime, y + -1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p3, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p3, v);
 
             CPunct p4(x + 1 * lungime, y + 1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p4, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p4, v);
 
             CPunct p5(x + -1 * lungime, y);
-            segmentImage1(lungime / 3.0, nivel - 1, p5, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p5, v);
 
             CPunct p6(x + 1 * lungime, y);
-            segmentImage1(lungime / 3.0, nivel - 1, p6, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p6, v);
 
             CPunct p7(x , y + 1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p7, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p7, v);
 
             CPunct p8(x , y + -1 * lungime);
-            segmentImage1(lungime / 3.0, nivel - 1, p8, v);
+            segmentSquares(lungime / 3.0, nivel - 1, p8, v);
 
             CPunct p9(x + lungime / 2, y + lungime / 2);
             deseneaza_patrat(lungime,v,p9);
@@ -578,7 +398,7 @@ public:
         CVector v1(0.0, 1);
         CPunct p1(0.0, 0.0);
 
-        segmentImage1(lungime, nivel, p1, v1);
+        segmentSquares(lungime, nivel, p1, v1);
 
         lungime *= 3;
         p1 = CPunct(lungime / 2, lungime / 2);
@@ -606,13 +426,12 @@ public:
 
     }
 
-
 };
 
-class CArboreBinar2
+class CArbore
 {
 public:
-    void arborePerron(double lungime,int nivel,double factordiviziune,CPunct p,CVector v)
+    void arbore(double lungime,int nivel,double factordiviziune,CPunct p,CVector v)
     {
         assert(factordiviziune != 0);
         CPunct p1, p2;
@@ -625,7 +444,7 @@ public:
             v.rotatie(-45);
             v.deseneaza(p, lungime);
             p1 = v.getDest(p, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+            arbore(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
 
             v.rotatie(+90);
             v.deseneaza(p, lungime);
@@ -635,7 +454,7 @@ public:
             v.rotatie(15);
             v.deseneaza(p1, lungime);
             p1 = v.getDest(p1, lungime);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+            arbore(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
 
             p1 = p2;
             v.rotatie(-60);
@@ -646,13 +465,13 @@ public:
             v.rotatie(30);
             v.deseneaza(p1, lungime/2);
             p1 = v.getDest(p1, lungime/2);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+            arbore(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
 
             p1 = p2;
             v.rotatie(-120);
             v.deseneaza(p1, lungime/2);
             p1 = v.getDest(p1, lungime/2);
-            arborePerron(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
+            arbore(lungime * factordiviziune, nivel - 1, factordiviziune, p1, v);
         }
     }
 
@@ -663,15 +482,15 @@ public:
 
         v.deseneaza(p, 0.25);
         p = v.getDest(p, 0.25);
-        arborePerron(lungime, nivel, 0.4, p, v);
+        arbore(lungime, nivel, 0.4, p, v);
     }
 };
 
 
-class CCurbaHilbert2
+class CTriangle
 {
 public:
-    void curbaHilbert(double lungime, int nivel, CPunct& p, CVector& v, int d)
+    void triangle(double lungime, int nivel, CPunct& p, CVector& v, int d)
     {
         if (nivel == 0)
         {
@@ -711,14 +530,14 @@ public:
 
         
         v.rotatie(d * 60);
-        curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+        triangle(lungime/2, nivel - 1, p, v, -d);
 
         v.rotatie(-d * 60);
-        curbaHilbert(lungime/2, nivel - 1, p, v, d);
+        triangle(lungime/2, nivel - 1, p, v, d);
 
 
         v.rotatie(-d * 60);
-        curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+        triangle(lungime/2, nivel - 1, p, v, -d);
 
         v = initial_vector;
 
@@ -730,23 +549,22 @@ public:
         CVector v(1.0, 0.0);
         CPunct p(-0.7, 0.9);
 
-        curbaHilbert(lungime, nivel, p, v, 1);
+        triangle(lungime, nivel, p, v, 1);
     }
 };
 
 
-// displays the Koch snowflake
 void Display1() {
     CComplex c(-0.12375, 0.056805);
 
-    CJuliaFatou cjf(c);
+    CMandelbrot cjf(c);
     glColor3f(1.0, 0.1, 0.1);
     cjf.setnriter(10);
     cjf.display(-2, -2, 2, 2);
 }
 
 void Display2() {
-    Image1 cck;
+    CSquares cck;
     cck.afisare(0.5, nivel+1);
     char c[3];
     sprintf(c, "%2d", nivel);
@@ -775,7 +593,7 @@ void Display2() {
 }
 
 void Display3() {
-    CArboreBinar2 cab;
+    CArbore cab;
     cab.afisare(0.3, nivel);
     char c[3];
     sprintf(c, "%2d", nivel);
@@ -801,7 +619,7 @@ void Display3() {
 }
 
 void Display4() {
-    CCurbaHilbert2 cbh;
+    CTriangle cbh;
     cbh.afisare(0.8, nivel);
     char c[3];
     sprintf(c, "%2d", nivel);
@@ -914,5 +732,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
-
