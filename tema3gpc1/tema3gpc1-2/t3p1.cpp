@@ -181,27 +181,7 @@ private:
   } m;
 };
 
-// Julia-Fatou set for z0 = 0 and c = -0.12375+0.056805i
-void Display1() {
-  CComplex c(-0.12375, 0.056805);
-  CJuliaFatou cjf(c);
-
-  glColor3f(1.0, 0.1, 0.1);
-  cjf.setnriter(30);
-  cjf.display(-0.8, -0.4, 0.8, 0.4);
-}
-
-// Julia-Fatou set for z0 = 0 and c = -0.012+0.74i
-void Display2() {
-  CComplex c(-0.012, 0.74);
-  CJuliaFatou cjf(c);
-
-  glColor3f(1.0, 0.1, 0.1);
-  cjf.setnriter(30);
-  cjf.display(-1, -1, 1, 1);
-}
-
-void Display3()
+void Display1()
 {
     CComplex c(-0.12375, 0.056805);
 
@@ -226,14 +206,6 @@ void Display(void) {
   case '1':
     glClear(GL_COLOR_BUFFER_BIT);
     Display1();
-    break;
-  case '2':
-    glClear(GL_COLOR_BUFFER_BIT);
-    Display2();
-    break;
-  case '3':
-    glClear(GL_COLOR_BUFFER_BIT); 
-    Display3();
     break;
   default:
     break;

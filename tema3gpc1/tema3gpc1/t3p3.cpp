@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <float.h>
 
@@ -10,10 +11,179 @@
 
 // the size of the window measured in pixels
 #define dim 300
+// the maximum number of iterations for the Julia-Fatou set membership testing 
+#define NRITER_JF 5000
+// the maximum value of M for the Julia-Fatou set membership testing 
+#define MODMAX_JF 10000000
+// increments used in CJuliaFatou
+#define RX_JF 0.01
+#define RY_JF 0.01
+#define my_point_size (1.5)
+#define my_step (0.007)
 
 unsigned char prevKey;
 int nivel = 0;
 
+
+class CComplex {
+public:
+    CComplex() : re(0.0), im(0.0) {}
+    CComplex(double re1, double im1) : re(re1 * 1.0), im(im1 * 1.0) {}
+    CComplex(const CComplex& c) : re(c.re), im(c.im) {}
+    ~CComplex() {}
+
+    CComplex& operator=(const CComplex& c)
+    {
+        re = c.re;
+        im = c.im;
+        return *this;
+    }
+
+    double getRe() { return re; }
+    void setRe(double re1) { re = re1; }
+
+    double getIm() { return im; }
+    void setIm(double im1) { im = im1; }
+
+    double getModul() { return sqrt(re * re + im * im); }
+
+    int operator==(CComplex& c1)
+    {
+        return ((re == c1.re) && (im == c1.im));
+    }
+
+    CComplex pow2()
+    {
+        CComplex rez;
+        rez.re = powl(re * 1.0, 2) - powl(im * 1.0, 2);
+        rez.im = 2.0 * re * im;
+        return rez;
+    }
+
+
+    friend CComplex operator+(const CComplex& c1, const CComplex& c2);
+    friend CComplex operator*(CComplex& c1, CComplex& c2);
+
+    void print(FILE* f)
+    {
+        fprintf(f, "%.20f%+.20f i", re, im);
+    }
+
+private:
+    double re, im;
+};
+
+CComplex operator+(const CComplex& c1, const CComplex& c2)
+{
+    CComplex rez(c1.re + c2.re, c1.im + c2.im);
+    return rez;
+}
+
+CComplex operator*(CComplex& c1, CComplex& c2)
+{
+    CComplex rez(c1.re * c2.re - c1.im * c2.im,
+        c1.re * c2.im + c1.im * c2.re);
+    return rez;
+}
+
+class CJuliaFatou {
+public:
+    CJuliaFatou()
+    {
+        // m.c is initialized by default with 0+0i
+
+        m.nriter = NRITER_JF;
+        m.modmax = MODMAX_JF;
+    }
+
+    CJuliaFatou(CComplex& c)
+    {
+        m.c = c;
+        m.nriter = NRITER_JF;
+        m.modmax = MODMAX_JF;
+    }
+
+    ~CJuliaFatou() {}
+
+    void setmodmax(double v) { assert(v <= MODMAX_JF); m.modmax = v; }
+    double getmodmax() { return m.modmax; }
+
+    void setnriter(int v) { assert(v <= NRITER_JF); m.nriter = v; }
+    int getnriter() { return m.nriter; }
+
+    // it tests if x belongs to the Julia-Fatou set Jc
+    // it returns 0 if yes, -1 for finite convergence, +1 for infinite convergence
+    int isIn(CComplex& nr)
+    {
+        int rez = 0;
+        // an array for storing the values for computing z_n+1 = z_n * z_n + c
+        CComplex z0, z1;
+
+        z0 = nr;
+        CComplex c = z0;
+        for (int i = 1; i < m.nriter; i++)
+        {
+            z1 = z0 * z0 + c;
+            if (z1 == z0 || z1.getModul() > 2)
+            {
+                // x does not belong to the J-F set because the 
+                // iterative process converges finitely
+                rez = -1;
+                break;
+            }
+            else if (z1.getModul() > m.modmax)
+            {
+                // x does not belong to the J-F set because the 
+                // iterative process converges infinitely
+                rez = 1;
+                break;
+            }
+            z0 = z1;
+        }
+
+        return rez;
+    }
+
+    // it displays a J-F set
+    void display(double xmin, double ymin, double xmax, double ymax)
+    {
+        glPushMatrix();
+        glLoadIdentity();
+
+        glBegin(GL_POINTS);
+        for (double x = xmin; x <= xmax; x += RX_JF)
+            for (double y = ymin; y <= ymax; y += RY_JF)
+            {
+                CComplex z(x, y);
+                int r = isIn(z);
+                if (r == 0)
+                {
+                    glVertex3d(x / 2, y / 2, 0);
+                }
+                else if (r == -1)
+                {
+
+                }
+                else if (r == 1)
+                {
+
+                }
+            }
+        fprintf(stdout, "STOP\n");
+        glEnd();
+
+        glPopMatrix();
+    }
+
+private:
+    struct SDate {
+        CComplex c;
+        // number of iterations
+        int nriter;
+        // the maximum value of M
+        double modmax;
+    } m;
+};
 
 class C2coord
 {
@@ -505,34 +675,60 @@ public:
     {
         if (nivel == 0)
         {
+            return;
         }
-        else if(nivel == 1){
+        else if (nivel == 1) {
+            CVector auxiliar_vector = v;
+          
             if (d == 1) {
-                for (int i = 0; i < 3; i++)
-                    v.rotatie(30);
-                    v.deseneaza(p, lungime);
-                    p = v.getDest(p, lungime);
-                }
-            }
-            else
-            {
-                v.rotatie(-d * 60);
-                curbaHilbert(lungime/2, nivel - 1, p, v, -d);
-
-                v.rotatie(d * 60);
-                curbaHilbert(lungime/2, nivel - 1, p, v, d);
-
-
-                v.rotatie(d * 60);
-                curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+                v.rotatie(-30);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
+                v.rotatie(-60);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
+                v.rotatie(-60);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
 
             }
+            else {
+                v.rotatie(-150);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
+                v.rotatie(60);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
+                v.rotatie(60);
+                v.deseneaza(p, lungime);
+                p = v.getDest(p, lungime);
+            }
+            v = auxiliar_vector;
+
+            return;
+        }
+        CVector initial_vector = v;
+
+        
+        v.rotatie(d * 60);
+        curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+
+        v.rotatie(-d * 60);
+        curbaHilbert(lungime/2, nivel - 1, p, v, d);
+
+
+        v.rotatie(-d * 60);
+        curbaHilbert(lungime/2, nivel - 1, p, v, -d);
+
+        v = initial_vector;
+
+        
     }
 
     void afisare(double lungime, int nivel)
     {
         CVector v(1.0, 0.0);
-        CPunct p(-0.7, 0.7);
+        CPunct p(-0.7, 0.9);
 
         curbaHilbert(lungime, nivel, p, v, 1);
     }
@@ -541,167 +737,93 @@ public:
 
 // displays the Koch snowflake
 void Display1() {
-    CCurbaKoch cck;
-    cck.afisare(sqrt(3.0), nivel);
+    CComplex c(-0.12375, 0.056805);
 
-    char c[3];
-    sprintf(c, "%2d", nivel);
-    glRasterPos2d(-0.98, -0.98);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
-
-    glRasterPos2d(-1.0, 0.9);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'c');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'u');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ' ');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'u');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ' ');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'K');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'o');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'c');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'h');
-
-    nivel++;
+    CJuliaFatou cjf(c);
+    glColor3f(1.0, 0.1, 0.1);
+    cjf.setnriter(10);
+    cjf.display(-2, -2, 2, 2);
 }
 
-// displays a binary tree
 void Display2() {
-    CArboreBinar cab;
-    cab.afisare(1, nivel);
-
-    char c[3];
-    sprintf(c, "%2d", nivel);
-    glRasterPos2d(-0.98, -0.98);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
-
-    glRasterPos2d(-1.0, 0.9);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'o');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ' ');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'n');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-
-    nivel++;
-}
-
-// displays a fractal tree
-void Display3() {
-    CArborePerron cap;
-
-    char c[3];
-    sprintf(c, "%2d", nivel);
-    glRasterPos2d(-0.98, -0.98);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
-
-    glRasterPos2d(-1.0, -0.9);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'o');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ' ');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'P');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'o');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'n');
-
-    glPushMatrix();
-    glLoadIdentity();
-    glScaled(0.4, 0.4, 1);
-    glTranslated(-0.5, -0.5, 0.0);
-    cap.afisare(1, nivel);
-    glPopMatrix();
-    nivel++;
-}
-
-// displays the Hilbert curve
-void Display4() {
-    CCurbaHilbert cch;
-    cch.afisare(0.05, nivel);
-
-    char c[3];
-    sprintf(c, "%2d", nivel);
-    glRasterPos2d(-0.98, -0.98);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
-
-    glRasterPos2d(-1.0, -0.9);
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'c');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'u');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ' ');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'H');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
-    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 't');
-
-    nivel++;
-}
-
-void Display5() {
     Image1 cck;
     cck.afisare(0.5, nivel+1);
+    char c[3];
+    sprintf(c, "%2d", nivel);
+    glRasterPos2d(-0.98, -0.98);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
 
+
+    glRasterPos2d(-1.0, -0.9);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 's');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'q');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'u');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 's');
 
 
     nivel++;
 }
 
-void Display6() {
+void Display3() {
     CArboreBinar2 cab;
     cab.afisare(0.3, nivel);
+    char c[3];
+    sprintf(c, "%2d", nivel);
+    glRasterPos2d(-0.98, -0.98);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
+
+    glRasterPos2d(-1.0, -0.9);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'b');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'o');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
+
     nivel++;
 }
 
-void Display7() {
+void Display4() {
     CCurbaHilbert2 cbh;
     cbh.afisare(0.8, nivel);
+    char c[3];
+    sprintf(c, "%2d", nivel);
+    glRasterPos2d(-0.98, -0.98);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'N');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'v');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, '=');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[0]);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c[1]);
+
+    glRasterPos2d(-1.0, -0.9);
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 't');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'r');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'i');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'a');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'n');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'g');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'l');
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, 'e');
     nivel++;
 
 }
@@ -741,18 +863,6 @@ void Display(void)
     case '4':
         glClear(GL_COLOR_BUFFER_BIT);
         Display4();
-        break;
-    case '5':
-        glClear(GL_COLOR_BUFFER_BIT);
-        Display5();
-        break;
-    case '6':
-        glClear(GL_COLOR_BUFFER_BIT);
-        Display6();
-        break;
-    case '7':
-        glClear(GL_COLOR_BUFFER_BIT);
-        Display7();
         break;
     default:
         break;
