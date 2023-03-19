@@ -490,6 +490,19 @@ public:
 class CTriangle
 {
 public:
+    void deseneaza_3_laturi(double lungime, int nivel, CPunct& p, CVector& v, int d) {
+        
+        v.rotatie(d * 60);
+        v.deseneaza(p, lungime);
+        p = v.getDest(p, lungime);
+        v.rotatie(-d * 60);
+        v.deseneaza(p, lungime);
+        p = v.getDest(p, lungime);
+        v.rotatie(-d * 60);
+        v.deseneaza(p, lungime);
+        p = v.getDest(p, lungime);
+    }
+
     void triangle(double lungime, int nivel, CPunct& p, CVector& v, int d)
     {
         if (nivel == 0)
@@ -498,37 +511,12 @@ public:
         }
         else if (nivel == 1) {
             CVector auxiliar_vector = v;
-          
-            if (d == 1) {
-                v.rotatie(-30);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-                v.rotatie(-60);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-                v.rotatie(-60);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-
-            }
-            else {
-                v.rotatie(-150);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-                v.rotatie(60);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-                v.rotatie(60);
-                v.deseneaza(p, lungime);
-                p = v.getDest(p, lungime);
-            }
+            deseneaza_3_laturi(lungime, nivel, p, v,d);
             v = auxiliar_vector;
-
             return;
         }
         CVector initial_vector = v;
 
-        
         v.rotatie(d * 60);
         triangle(lungime/2, nivel - 1, p, v, -d);
 
@@ -546,7 +534,7 @@ public:
 
     void afisare(double lungime, int nivel)
     {
-        CVector v(1.0, 0.0);
+        CVector v(0.0, -1.0);
         CPunct p(-0.7, 0.9);
 
         triangle(lungime, nivel, p, v, 1);
