@@ -1,76 +1,10 @@
-/**********************************
-  
-  The reader of this program should not limit
-  himself/herself to the comments of this 
-  program.
-
-  If one wants to read more about the syntax and 
-  the semantics of OpenGL functions used in this
-  program, one should read the beginning of the
-  paragraph 2.6 "Begin/End Paradigm", the 
-  paragraph 2.6.1 "Begin and End Objects" from the 
-  file glspec15.pdf at page 25/333 and the index
-  from the end of that file. One could also
-  read the references to the GLUT functions from
-  the file glut-3.spec.pdf.
-  
-
-
-  H O W  T O  R E A D  T H I S  P R O G R A M ?
-  
-  Start from the function "main" and follow the 
-  instruction flow, paying attention to the fact that
-  this program belongs to the event-driven programming
-  paradigm. So pay attention to what happens when 
-  the user presses a key, moves the mouse or presses a
-  mouse button. There are also some special events: the
-  redrawing of the application window, etc.
-  Identify what happens in the program when one of these
-  events occurs.
-
-  **********************************/
-
-
-
-
-/**********************************
-
- If you want to use the GLUT utility toolkit 
- you must include the header file <GL/glut.h> .
-
- This header file will include automatically
- the header files needed in order to use 
- OpenGL library : <GL/gl.h> and <GL/glu.h> .
- You don't need to include these two header files
- in your program.
-
- The OpenGL library functions are prefixed by gl,
- those in GLU by glu and those in GLUT by glut
-
- In the following it is desirable that the 
- students will use this program like a framework
- (or like a "skeleton") for their future programs
- at Computer Graphics course.
-
- **********************************/
-
-
-// Pay attention to the order of include-file directives !
-// That's important, in order to avoid some compile-time errors.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-/**********************************
-  This include-file directive will be used only if
-  you have installed OpenGL library as an Administrator
-  i.e., you have the necessary rights to copy the files
-  glut.h, glut32.lib, glut32.dll in the following locations:
-  C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include\gl\glut.h
-  C:\Program Files\Microsoft SDKs\Windows\v7.0A\Lib\glut32.lib
-  C:\Windows\System32\glut32.dll
- **********************************/
-// #include <GL/glut.h>
+#include <cmath>
+#include <assert.h>
+#include <float.h>
+#include <iostream>
 
 // Instead of previous include-file directive use this one.
 #include "glut.h"
@@ -80,15 +14,59 @@
 // will be used later in the program to select which 
 // image to draw.
 unsigned char prevKey;
+int width;
+int height;
+
+class CartesianGrid {
+private:
+    int minSize=0;
+   
+public:
+    CartesianGrid() {}
+    void CreateGrid(int rows, int cols){
+        minSize = std::min(width, height);
+        float ratio1 = 0.0;
+        float ratio2 = 0.0;
+        ratio1 = (width / (cols + 2));
+        ratio1=ratio1/150;
+        ratio2 = (height / (rows + 2));
+        ratio2= ratio2/ 150;
+        
+        
+        glColor3f(0, 0, 0);
+        float y = 1.0;
+        float ratio = 0.0;
+        if (width < height) {
+            ratio = ratio1;
+        }
+        else {
+            ratio = ratio2;
+        }
+  
+        for (int indexRow = 0; indexRow < rows; indexRow += 1) {
+            y = y - ratio;
+            glBegin(GL_LINES);
+                glVertex2d(-1.0 + ratio, y);
+                glVertex2d(-1.0 + ratio + rows*ratio, y);
+            glEnd();
+            
+        }
+        //for (int currentCol = 0; currentCol < minSize; currentCol += ratio) {
+
+        //}
+
+        
+            
+
+
+    }
+};
 
 void Display1() {
-	// The geometry object in this case is a line segment.
-	// In order to completely specify a line segment one
-	// should specify two different points.
-
-	// A point is specified completely by providing 
-	// two (or three in 3D case) coordinates: for x, y 
-	// (and z).
+    CartesianGrid cg;
+    cg.CreateGrid(17,17);
+}
+void Display10() {
   glColor3f(0.2,0.15,0.88); // blue
   // A line segment is drawn between the points
   // specified by the vertices 
@@ -346,19 +324,12 @@ void Display(void) {
   glFlush();
 }
 
-// The parameters w(idth) and h(eight) specify the new 
-// dimensions of the application window
+
 void Reshape(int w, int h) {
   printf("Call Reshape : width = %d, height = %d\n", w, h);
+  width = w;
+  height = h;
 
-  // The function void glViewport (GLint x, GLint y,
-  //                               GLsizei width, GLsizei height)
-  // defines the viewport : a rectangular area inside the
-  // application window used for displaying by OpenGL.
-  // x, y are the coordinates of the left down corner and
-  // width and height are expressed in pixels.
-  // In this case the viewport has the same dimensions as
-  // the application window.
   glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 }
 
