@@ -41,6 +41,8 @@ public:
             ratio = ratio2;
         }
         globalRatio = ratio;
+        glLineWidth(1);
+
 
         for (int indexRow = 0; indexRow < rows; indexRow += 1) {
             y = y - ratio;
@@ -84,6 +86,7 @@ public:
         float xn = -1.0 + xEnd * ratio;
         float yn = 1.0 - ratio * (minSize + 1) + yEnd * ratio;
         glColor3f(1, 0.1, 0.1);
+        glLineWidth(2);
         glBegin(GL_LINES);
         glVertex2d(x0, y0);
         glVertex2d(xn, yn);
@@ -96,6 +99,43 @@ public:
             y = y + m;
         }
     }
+    void drawPixelsCircle(float xStart, float yStart, float radius) {
+        float ratio = globalRatio;
+        int radius2 = radius;
+        radius = radius /10;
+
+        float x0 = -1.0 + (xStart + 2) * ratio;
+        float y0 = 1.0 - ratio * (minSize ) + yStart * ratio;
+
+        glColor3f(1, 0.1, 0.1);
+        glLineWidth(3);
+        int lineAmount = 100; 
+
+        glBegin(GL_LINE_LOOP);
+        for (int index = 0; index <= lineAmount; index++) {
+            glVertex2f(
+                x0 + (radius * cos(index * 2.0f * 3.14 / lineAmount)),
+                y0 + (radius * sin(index * 2.0f * 3.14 / lineAmount))
+            );
+        }
+        glEnd();
+        int x = 0, y = radius2;
+        float d = 5.0 / 4 - radius2;
+        writePixel(x + 5, y-2);
+        while (y > x) {
+            if (d < 2) {
+                d += 2 * x + 3;
+                x++;
+            }
+            else {
+                d += 2 * (x - y) + 5;
+                x++;
+                y--;
+            }
+            writePixel(x + 5, y-2);
+        }
+
+    }
 };
 
 void Display1() {
@@ -103,6 +143,12 @@ void Display1() {
     cg.CreateGrid(17, 17);
     cg.drawPixelsLine(0.0, 0.0, 17.0, 7.0);
     cg.drawPixelsLine(0.0, 16.0, 17.0, 11.0);
+}
+
+void Display2() {
+    CartesianGrid cg1;
+    cg1.CreateGrid(17, 17);
+    cg1.drawPixelsCircle(0.0, 0.0,13.0);
 }
 
 void Init(void) {
@@ -122,6 +168,9 @@ void Display(void) {
     switch (prevKey) {
     case '1':
         Display1();
+        break;
+    case '2':
+        Display2();
         break;
     default:
         break;
