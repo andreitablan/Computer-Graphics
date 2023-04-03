@@ -61,7 +61,7 @@ public:
 
         }
     }
-    void writePixel(float i, float j) {
+    void writePixel(int i, int j) {
 
         float ratio = globalRatio;
         float x = -1.0 + (i + 1) * ratio;
@@ -124,7 +124,7 @@ public:
         float d = 5.0 / 4 - radius2;
         writePixel(x + 5, y-2);
         while (y > x) {
-            if (d < 2) {
+            if (d < 0) {
                 d += 2 * x + 3;
                 x++;
             }
