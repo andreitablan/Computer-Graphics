@@ -25,9 +25,9 @@ public:
         float ratio1 = 0.0;
         float ratio2 = 0.0;
         ratio1 = (width / (cols + 2));
-        ratio1 = ratio1 / 150;
+        ratio1 = ratio1 / (width/2);
         ratio2 = (height / (rows + 2));
-        ratio2 = ratio2 / 150;
+        ratio2 = ratio2 / (height/2);
 
 
         glColor3f(0.0, 0.0, 0.0);
@@ -117,6 +117,7 @@ public:
                 x0 + (radius * cos(index * 2.0f * 3.14 / lineAmount)),
                 y0 + (radius * sin(index * 2.0f * 3.14 / lineAmount))
             );
+          
         }
         glEnd();
         int x = 0, y = radius2;
