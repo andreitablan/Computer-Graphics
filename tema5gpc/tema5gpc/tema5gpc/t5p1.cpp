@@ -67,8 +67,17 @@ void Display4() {
 }
 
 void Display5() {
+    
+    glPushMatrix();
     glColor3f(0, 0, 0);
+    //glTranslatef(0.5f, 0.5f, 0.5f);
+    glTranslatef(0, 0, 0);
+    glTranslatef(-0.5f, -0.5f, -0.5f); // transl
+    glRotatef(45.0f, 0.0f, 1.0f, 0.0f);  // rotate around x-axis
+    //glRotatef(15.0f, 0.0f, 1.0f, 0.0f);  // rotate around x-axis
+ 
     glutWireCube(1);
+    glPopMatrix();
 }
 void DisplayObiect()
 {
