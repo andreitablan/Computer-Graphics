@@ -18,6 +18,49 @@ void InitObiect();
 void DisplayObiect();
 
 
+void drawCaseW() {
+    proiectieParalela('w');
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glPushMatrix();
+    glTranslated(0, 0, -lat);
+    glTranslated(lat / 2.0, lat / 2.0, lat / 2.0);
+    glRotated(180, 0, 1, 0);
+    glTranslated(-lat / 2.0, -lat / 2.0, -lat / 2.0);
+    DisplayAxe();
+    DisplayObiect();
+    glPopMatrix();
+}
+
+void Image() {
+
+    drawCaseW();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    proiectieParalela('1');
+    glRotatef(270, -1, 0, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+    DisplayAxe();
+    DisplayObiect();
+}
+
+void Image2() {
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glOrtho(-1, 1, -1, 1, 0, 1);
+    glTranslatef(0.5f, 0.5f, 0.0f);
+    glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+    glScalef(1.0f, 1.0f, 0.5f);
+    glMatrixMode(GL_MODELVIEW);
+    DisplayAxe();
+    DisplayObiect();
+
+}
+
 void Init(void) {
    glClearColor(1, 1, 1, 1);
 
@@ -48,6 +91,12 @@ void Display()
     glLoadIdentity();
     DisplayAxe();
     break;
+  case '1':
+      Image();
+      break;
+  case '2':
+      Image2();
+      break;
   case 'A':
     DisplayAxe();
     break;
@@ -90,24 +139,14 @@ void Display()
     break;
   case 'w':
     // orthographic parallel projection: front-elevation projection
-    proiectieParalela('w');
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
-      glTranslated(0, 0, -lat);
-      glTranslated(lat/2.0, lat/2.0, lat/2.0);
-      glRotated(180, 0, 1, 0);
-      glTranslated(-lat/2.0, -lat/2.0, -lat/2.0);
-      DisplayAxe();
-      DisplayObiect();
-    glPopMatrix();
+    drawCaseW();
     break;
   default:
     break;
   }
   glutSwapBuffers();
 }
+
 
 void Reshape(int w, int h) {
    h = (h == 0) ? 1 : h;      
@@ -164,6 +203,8 @@ void proiectieParalela(unsigned char c) {
   case 'w':
     glOrtho(-1, 6, -1, 6, -1, 20);
     break;
+  case '1':
+     glOrtho(-1, 6, -6, 1, -5, 1);
   default:
     break;
   }
