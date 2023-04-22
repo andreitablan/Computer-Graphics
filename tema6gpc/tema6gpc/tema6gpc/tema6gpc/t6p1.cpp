@@ -51,9 +51,12 @@ void Image2() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, 0, 1);
-    glTranslatef(0.5f, 0.5f, 0.0f);
-    glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+
+    proiectieParalela('Y');
+   
+    glRotatef(340, 0, 1, 0);
+    glRotatef(20, 1, 0, 0);
+    
     glScalef(1.0f, 1.0f, 0.5f);
     glMatrixMode(GL_MODELVIEW);
     DisplayAxe();
